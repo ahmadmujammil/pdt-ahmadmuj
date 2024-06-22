@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  mysql-master:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ecommerce
+    volumes:
+      - mysql-master-data:/var/lib/mysql
+    networks:
+      - ecommerce-network
+  mysql-slave1:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - mysql-master
+    networks:
+      - ecommerce-network
+  mysql-slave2:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - mysql-master
+    networks:
+      - ecommerce-network
+  redis:
+    image: redis:latest
+    networks:
+      - ecommerce-network
+  mongodb:
+    image: mongo:latest
+    networks:
+      - ecommerce-network
+  php-app:
+    build: ./php
+    networks:
+      - ecommerce-network
+  nodejs-app:
+    build: ./nodejs
+    networks:
+      - ecommerce-network
+volumes:
+  mysql-master-data:
+  mysql-slave1-data:
+  mysql-slave2-data:
+networks:
+  ecommerce-network:
